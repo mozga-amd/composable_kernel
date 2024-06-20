@@ -225,6 +225,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 message("CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
 
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    string(APPEND CMAKE_CXX_FLAGS " -fcolor-diagnostics")
+endif()
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.9)
+    string(APPEND CMAKE_CXX_FLAGS " -fdiagnostics-color=always")
+endif()
+
+add_link_options(-fsanitize=address)
+add_compile_options(-fno-omit-frame-pointer)
+add_compile_options(-fsanitize=address)
+
 ## HIP
 set(CMAKE_HIP_PLATFORM amd)
 set(CMAKE_HIP_COMPILER ${CMAKE_CXX_COMPILER})
@@ -439,6 +450,13 @@ if(BUILD_DEV)
     add_compile_options(-Weverything)
 endif()
 message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    add_compile_options(-fcolor-diagnostics)
+endif()
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.9)
+    add_compile_options(-fdiagnostics-color=always)
+endif()
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -C ${CMAKE_CFG_INTDIR})
 
